@@ -19,7 +19,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 
-class PDFMerger {
+class PDFMerger
+{
 
     /**
      * Access the filesystem on an oop base
@@ -60,7 +61,8 @@ class PDFMerger {
      * Construct and initialize a new instance
      * @param Filesystem $oFilesystem
      */
-    public function __construct(Filesystem $oFilesystem){
+    public function __construct(Filesystem $oFilesystem)
+    {
         $this->oFilesystem = $oFilesystem;
         $this->oFPDI = new FPDI();
         $this->tmpFiles = collect([]);
@@ -71,9 +73,10 @@ class PDFMerger {
     /**
      * The class deconstructor method
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         $oFilesystem = $this->oFilesystem;
-        $this->tmpFiles->each(function($filePath) use($oFilesystem){
+        $this->tmpFiles->each(function ($filePath) use ($oFilesystem) {
             $oFilesystem->delete($filePath);
         });
     }
@@ -84,7 +87,8 @@ class PDFMerger {
      *
      * @return self
      */
-    public function init(){
+    public function init()
+    {
         $this->oFPDI = new FPDI();
         $this->aFiles = collect([]);
         return $this;
@@ -95,7 +99,8 @@ class PDFMerger {
      *
      * @return string
      */
-    public function stream(){
+    public function stream()
+    {
         return $this->oFPDI->Output($this->fileName, 'I');
     }
 
@@ -104,11 +109,12 @@ class PDFMerger {
      *
      * @return string
      */
-    public function download(){
+    public function download()
+    {
         $output = $this->output();
         return new Response($output, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' =>  'attachment; filename="' . $this->fileName . '"',
+            'Content-Disposition' => 'attachment; filename="' . $this->fileName . '"',
             'Content-Length' => strlen($output),
         ]);
     }
@@ -118,8 +124,9 @@ class PDFMerger {
      *
      * @return string
      */
-    public function save($filePath = null){
-        return $this->oFilesystem->put($filePath?$filePath:$this->fileName, $this->output());
+    public function save($filePath = null)
+    {
+        return $this->oFilesystem->put($filePath ? $filePath : $this->fileName, $this->output());
     }
 
     /**
@@ -127,7 +134,8 @@ class PDFMerger {
      *
      * @return string
      */
-    public function output(){
+    public function output()
+    {
         return $this->oFPDI->Output($this->fileName, 'S');
     }
 
@@ -137,7 +145,8 @@ class PDFMerger {
      *
      * @return string
      */
-    public function setFileName($fileName){
+    public function setFileName($fileName)
+    {
         $this->fileName = $fileName;
         return $this;
     }
@@ -150,13 +159,14 @@ class PDFMerger {
      *
      * @return string
      */
-    public function addString($string, $pages = 'all', $orientation = null){
+    public function addString($string, $pages = 'all', $orientation = null, $rotation = null)
+    {
 
-        $filePath = storage_path('tmp/'.Str::random(16).'.pdf');
+        $filePath = storage_path('tmp/' . Str::random(16) . '.pdf');
         $this->oFilesystem->put($filePath, $string);
         $this->tmpFiles->push($filePath);
 
-        return $this->addPDF($filePath, $pages, $orientation);
+        return $this->addPDF($filePath, $pages, $orientation, $rotation);
     }
 
     /**
@@ -169,16 +179,18 @@ class PDFMerger {
      *
      * @throws \Exception if the given pages aren't correct
      */
-    public function addPDF($filePath, $pages = 'all', $orientation = null) {
+    public function addPDF($filePath, $pages = 'all', $orientation = null, $rotation = null)
+    {
         if (file_exists($filePath)) {
             if (!is_array($pages) && strtolower($pages) != 'all') {
-                throw new \Exception($filePath."'s pages could not be validated");
+                throw new \Exception($filePath . "'s pages could not be validated");
             }
 
             $this->aFiles->push([
-                'name'  => $filePath,
+                'name' => $filePath,
                 'pages' => $pages,
-                'orientation' => $orientation
+                'orientation' => $orientation,
+                'rotation' => $rotation
             ]);
         } else {
             throw new \Exception("Could not locate PDF on '$filePath'");
@@ -195,7 +207,8 @@ class PDFMerger {
      *
      * @throws \Exception if there are now PDFs to merge
      */
-    public function merge($orientation = null) {
+    public function merge($orientation = null)
+    {
         $this->doMerge($orientation, false);
     }
 
@@ -207,11 +220,13 @@ class PDFMerger {
      *
      * @throws \Exception if there are now PDFs to merge
      */
-    public function duplexMerge($orientation = 'P') {
+    public function duplexMerge($orientation = 'P')
+    {
         $this->doMerge($orientation, true);
     }
 
-    protected function doMerge($orientation, $duplexSafe) {
+    protected function doMerge($orientation, $duplexSafe)
+    {
 
         if ($this->aFiles->count() == 0) {
             throw new \Exception("No PDFs to merge.");
@@ -219,18 +234,17 @@ class PDFMerger {
 
         $oFPDI = $this->oFPDI;
 
-        $this->aFiles->each(function($file) use($oFPDI, $orientation, $duplexSafe){
-            $file['orientation'] = is_null($file['orientation'])?$orientation:$file['orientation'];
+        $this->aFiles->each(function ($file) use ($oFPDI, $orientation, $duplexSafe) {
+            $file['orientation'] = is_null($file['orientation']) ? $orientation : $file['orientation'];
             $count = $oFPDI->setSourceFile(StreamReader::createByString(file_get_contents($file['name'])));
 
             if ($file['pages'] == 'all') {
 
                 for ($i = 1; $i <= $count; $i++) {
-                    $template   = $oFPDI->importPage($i);
-                    $size       = $oFPDI->getTemplateSize($template);
+                    $template = $oFPDI->importPage($i);
+                    $size = $oFPDI->getTemplateSize($template);
                     $autoOrientation = isset($file['orientation']) ? $file['orientation'] : $size['orientation'];
-
-                    $oFPDI->AddPage($autoOrientation, [$size['width'], $size['height']]);
+                    $oFPDI->AddPage($autoOrientation, [$size['width'], $size['height']], $file['rotation']);
                     $oFPDI->useTemplate($template);
                 }
             } else {
@@ -246,7 +260,7 @@ class PDFMerger {
                 }
             }
 
-            if ($duplexSafe && $oFPDI->page % 2) {
+            if ($duplexSafe && $oFPDI->PageNo() % 2) {
                 $oFPDI->AddPage($file['orientation'], [$size['width'], $size['height']]);
             }
         });

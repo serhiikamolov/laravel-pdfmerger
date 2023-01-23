@@ -1,11 +1,5 @@
 # Laravel PDFMerger
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Software License][ico-license]](LICENSE.md)
-[![Build Status][ico-travis]][link-travis]
-[![Total Downloads][ico-downloads]][link-downloads]
-
-
 ## Install
 
 Via Composer
@@ -21,12 +15,12 @@ Add the service provider to the providers array in `config/app.php`.
 ``` php
 'providers' => [
     ...
-    Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class
+    PDFMerger\Providers\PDFMergerServiceProvider::class
 ],
 
 'aliases' => [
     ...
-    'PDFMerger' => Webklex\PDFMerger\Facades\PDFMergerFacade::class
+    'PDFMerger' => PDFMerger\Facades\PDFMergerFacade::class
 ]
 ```
 
@@ -34,7 +28,7 @@ Add the service provider to the providers array in `config/app.php`.
 A basic usage example:
 
 ``` php
-use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
+use PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 
 $oMerger = PDFMerger::init();
 
@@ -91,21 +85,6 @@ echo $oMerger->output();
 $oMerger->setFileName('example.pdf');
 
 ```
-
-## Change log
-
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
-
-## Testing
-
-``` bash
-$ composer test
-```
-
-## Security
-
-If you discover any security related issues, please email github@webklex.com instead of using the issue tracker.
-
 ## Credits
 
 - [Webklex][link-author]
@@ -114,17 +93,3 @@ If you discover any security related issues, please email github@webklex.com ins
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-[ico-version]: https://img.shields.io/packagist/v/Webklex/laravel-pdfmerger.svg?style=flat-square
-[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/Webklex/translator/master.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/Webklex/laravel-pdfmerger.svg?style=flat-square
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/Webklex/laravel-pdfmerger.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/Webklex/laravel-pdfmerger.svg?style=flat-square
-
-[link-packagist]: https://packagist.org/packages/Webklex/laravel-pdfmerger
-[link-travis]: https://travis-ci.org/Webklex/laravel-pdfmerger
-[link-scrutinizer]: https://scrutinizer-ci.com/g/Webklex/laravel-pdfmerger/code-structure
-[link-code-quality]: https://scrutinizer-ci.com/g/Webklex/laravel-pdfmerger
-[link-downloads]: https://packagist.org/packages/Webklex/laravel-pdfmerger
-[link-author]: https://github.com/webklex
