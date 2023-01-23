@@ -10,7 +10,7 @@
 *  -
 */
 
-namespace Webklex\PDFMerger\Facades;
+namespace PDFMerger\Facades;
 
 use \Illuminate\Support\Facades\Facade;
 

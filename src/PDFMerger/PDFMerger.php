@@ -10,7 +10,7 @@
 *  -
 */
 
-namespace Webklex\PDFMerger;
+namespace PDFMerger;
 
 use setasign\Fpdi\Fpdi as FPDI;
 use setasign\Fpdi\PdfParser\StreamReader;

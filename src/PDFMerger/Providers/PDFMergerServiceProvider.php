@@ -10,7 +10,7 @@
 *  -
 */
 
-namespace Webklex\PDFMerger\Providers;
+namespace PDFMerger\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Webklex\PDFMerger\PDFMerger;

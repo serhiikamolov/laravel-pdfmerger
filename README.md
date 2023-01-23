@@ -11,7 +11,7 @@
 Via Composer
 
 ``` bash
-$ composer require webklex/laravel-pdfmerger
+$ composer require serhiikamolov/laravel-pdfmerger
 ```
 
 ## Setup
